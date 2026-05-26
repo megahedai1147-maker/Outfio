@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outfio — مستشارك الشخصي للأناقة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rose:#d4718a; --rose-dark:#9b3f57; --rose-light:#f0a0b5;
+  --gold:#c9a84c; --gold-dark:#8b6914;
+  --black:#07070a; --surface:#0f0f14; --surface2:#16161e;
+  --border:#22222e; --border2:#2a2a38;
+  --text:#e0e0ea; --muted:#70707e;
+  --cream:#f5efe8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--text);font-family:'Cairo',sans-serif;direction:rtl;overflow-x:hidden;cursor:none;}
+
+/* ── CURSOR ── */
+#cur{width:8px;height:8px;background:var(--rose);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s;}
+#cur-ring{width:32px;height:32px;border:1px solid var(--rose);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .18s ease;opacity:.6;}
+
+/* ── GRAIN ── */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:2;opacity:.5;}
+
+/* ── NAV ── */
+nav{position:fixed;inset-block-start:0;inset-inline:0;z-index:100;padding:0 56px;height:72px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s;}
+nav.scrolled{background:rgba(7,7,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Playfair Display',serif;font-size:20px;color:#fff;letter-spacing:.5px;display:flex;align-items:center;gap:10px;}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));animation:pulse 2s ease-in-out infinite;}
+.logo span{color:var(--rose);}
+.nav-r{display:flex;align-items:center;gap:36px;}
+.nav-r a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.5px;transition:color .3s;}
+.nav-r a:hover{color:#fff;}
+.nav-btn{padding:10px 22px;background:transparent;border:1px solid var(--rose);border-radius:100px;color:var(--rose);font-size:13px;font-weight:700;cursor:none;font-family:'Cairo',sans-serif;transition:all .3s;letter-spacing:.3px;}
+.nav-btn:hover{background:var(--rose);color:#fff;box-shadow:0 0 24px rgba(212,113,138,.3);}
+
+/* ── HERO ── */
+.hero{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:center;padding:100px 0 80px;position:relative;overflow:hidden;}
+
+/* bg layers */
+.hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 10% 60%,rgba(212,113,138,.09) 0%,transparent 55%),radial-gradient(ellipse 35% 50% at 90% 20%,rgba(201,168,76,.06) 0%,transparent 50%);pointer-events:none;}
+.hero-grid-lines{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:.18;pointer-events:none;}
+
+.hero-l{padding:0 56px 0 80px;position:relative;z-index:3;}
+.hero-r{display:flex;align-items:center;justify-content:center;position:relative;z-index:3;}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;padding:7px 18px;background:rgba(212,113,138,.08);border:1px solid rgba(212,113,138,.2);border-radius:100px;font-size:11px;color:var(--rose-light);letter-spacing:2.5px;font-family:monospace;margin-bottom:32px;}
+.hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:pulse 2s ease-in-out infinite;}
+
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(40px,4.5vw,66px);line-height:1.08;color:#fff;margin-bottom:20px;font-weight:700;}
+.hero-h1 em{color:var(--rose);font-style:italic;}
+.hero-h1 .line2{display:block;color:var(--cream);font-weight:400;font-size:.85em;}
+
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.85;margin-bottom:40px;max-width:440px;font-weight:400;}
+
+.hero-form{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;padding:5px;margin-bottom:18px;max-width:460px;}
+.hero-inp{flex:1;background:transparent;border:none;outline:none;padding:11px 20px;color:#fff;font-size:14px;font-family:'Cairo',sans-serif;text-align:right;}
+.hero-inp::placeholder{color:var(--muted);}
+.hero-sub-btn{padding:11px 26px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));border:none;border-radius:100px;color:#fff;font-size:13px;font-weight:700;cursor:none;font-family:'Cairo',sans-serif;white-space:nowrap;transition:all .3s;box-shadow:0 4px 20px rgba(212,113,138,.3);}
+.hero-sub-btn:hover{box-shadow:0 6px 28px rgba(212,113,138,.45);transform:scale(1.02);}
+
+.hero-note{font-size:12px;color:var(--muted);}
+.hero-note b{color:var(--rose-light);}
+
+.success-toast{display:none;align-items:center;gap:10px;padding:12px 20px;background:rgba(107,203,119,.08);border:1px solid rgba(107,203,119,.25);border-radius:14px;color:#7ed492;font-size:13px;margin-top:12px;max-width:460px;}
+.success-toast.show{display:flex;}
+
+/* hero stats row */
+.hero-stats{display:flex;gap:32px;margin-top:48px;padding-top:36px;border-top:1px solid rgba(255,255,255,0.1);}
+.hstat{}
+.hstat-val{font-family:'Playfair Display',serif;font-size:30px;color:#fff;display:block;}
+.hstat-val span{color:var(--rose);}
+.hstat-lbl{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.3px;}
+
+/* ── PHONE VISUAL ── */
+.phone-wrap{position:relative;width:320px;}
+.phone{width:280px;height:590px;background:linear-gradient(160deg,#1a1020,#0d0d14);border-radius:44px;border:1px solid rgba(212,113,138,.15);box-shadow:0 0 0 8px rgba(15,15,20,.7),0 0 0 9px rgba(212,113,138,.06),0 60px 100px rgba(0,0,0,.9),0 0 80px rgba(212,113,138,.04);overflow:hidden;margin:0 auto;animation:phoneFloat 5s ease-in-out infinite;position:relative;z-index:2;}
+.p-screen{padding:22px 16px;height:100%;display:flex;flex-direction:column;gap:10px;}
+.p-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.p-brand{font-size:8px;color:var(--rose);letter-spacing:2px;font-family:monospace;}
+.p-name{font-family:'Playfair Display',serif;font-size:15px;color:#fff;}
+.p-avatar{width:30px;height:30px;border-radius:15px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.p-card-hero{background:linear-gradient(135deg,rgba(212,113,138,.12),rgba(155,63,87,.06));border:1px solid rgba(212,113,138,.18);border-radius:18px;padding:14px;}
+.p-card-label{font-size:7px;color:var(--rose);letter-spacing:1.5px;font-family:monospace;margin-bottom:10px;}
+.p-outfit{display:flex;gap:6px;margin-bottom:10px;}
+.p-piece{width:40px;height:48px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.p-outfit-txt{font-size:8px;color:#999;line-height:1.6;margin-bottom:10px;}
+.p-btn-mini{width:100%;padding:8px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));border:none;border-radius:10px;font-size:8px;font-weight:700;color:#fff;font-family:'Cairo',sans-serif;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.p-mini{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:10px 10px 8px;text-align:right;}
+.p-mini-ico{font-size:16px;margin-bottom:4px;}
+.p-mini-t{font-size:8px;color:#ddd;font-weight:600;}
+.p-mini-s{font-size:7px;color:#555;margin-top:2px;}
+.p-progress{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px;}
+.p-progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.p-progress-lbl{font-size:8px;color:#aaa;}
+.p-progress-val{font-size:10px;color:var(--rose);font-weight:700;}
+.p-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.p-bar-fill{height:100%;width:78%;background:linear-gradient(90deg,var(--rose-dark),var(--rose));border-radius:2px;}
+
+/* floating chips */
+.chip{position:absolute;background:var(--surface2);border:1px solid var(--border2);border-radius:16px;padding:10px 14px;display:flex;align-items:center;gap:9px;z-index:4;box-shadow:0 12px 32px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03);}
+.chip-ico{font-size:18px;flex-shrink:0;}
+.chip-t{font-size:10px;color:#ddd;font-weight:600;line-height:1.2;}
+.chip-s{font-size:9px;color:var(--rose);margin-top:2px;}
+.chip1{top:50px;left:-60px;animation:chipFloat1 6s ease-in-out infinite;}
+.chip2{bottom:120px;left:-70px;animation:chipFloat2 7s ease-in-out infinite;}
+.chip3{top:160px;right:-55px;animation:chipFloat3 5.5s ease-in-out infinite;}
+
+/* ── TICKER ── */
+.ticker-section{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0;background:var(--surface);}
+.ticker-track{display:flex;width:max-content;animation:ticker 24s linear infinite;}
+.tick{display:flex;align-items:center;gap:12px;padding:14px 28px;white-space:nowrap;}
+.tick-dot{width:3px;height:3px;border-radius:50%;background:var(--rose);flex-shrink:0;}
+.tick-txt{font-size:12px;color:var(--muted);letter-spacing:.5px;}
+
+/* ── SECTION BASE ── */
+.sec{padding:110px 80px;position:relative;}
+.sec-inner{max-width:1160px;margin:0 auto;}
+.sec-tag{display:inline-flex;align-items:center;gap:8px;font-size:10px;color:var(--rose);letter-spacing:3px;font-family:monospace;margin-bottom:14px;}
+.sec-tag::before{content:'';width:20px;height:1px;background:var(--rose);}
+.sec-h2{font-family:'Playfair Display',serif;font-size:clamp(30px,3.5vw,48px);color:#fff;line-height:1.15;margin-bottom:18px;}
+.sec-h2 em{font-style:italic;color:var(--rose);}
+.sec-sub{font-size:15px;color:var(--muted);line-height:1.85;max-width:520px;}
+
+/* ── PROBLEMS ── */
+.prob-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:24px;overflow:hidden;margin-top:64px;}
+.prob-card{background:var(--black);padding:36px 32px;transition:background .3s;}
+.prob-card:hover{background:var(--surface2);}
+.prob-num{font-size:11px;color:var(--border2);letter-spacing:2px;font-family:monospace;margin-bottom:24px;}
+.prob-ico{font-size:40px;margin-bottom:20px;display:block;}
+.prob-t{font-size:17px;color:#fff;font-weight:700;margin-bottom:10px;line-height:1.35;}
+.prob-d{font-size:13px;color:var(--muted);line-height:1.75;}
+
+/* ── NUMBERS ── */
+.nums-section{padding:80px;background:var(--black);}
+.nums-grid{display:grid;grid-template-columns:repeat(4,1fr);max-width:1160px;margin:0 auto;}
+.num-item{text-align:center;padding:48px 24px;border-left:1px solid rgba(255,255,255,0.12);}
+.num-item:last-child{border-left:none;}
+.num-val{font-family:'Playfair Display',serif;font-size:52px;color:#fff;display:block;line-height:1;}
+.num-val b{color:var(--rose);}
+.num-lbl{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;}
+
+/* ── FEATURES ── */
+.feat-grid{margin-top:72px;display:grid;gap:16px;}
+.feat-row-1{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;}
+.feat-row-2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:36px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s;}
+.feat-card:hover{border-color:rgba(212,113,138,.25);transform:translateY(-3px);}
+.feat-card::before{content:'';position:absolute;top:0;right:0;left:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,113,138,.3),transparent);opacity:0;transition:opacity .3s;}
+.feat-card:hover::before{opacity:1;}
+.feat-card.big{background:linear-gradient(145deg,rgba(212,113,138,.07),var(--surface));border-color:rgba(212,113,138,.15);}
+.feat-card.big .feat-visual{margin-top:24px;background:var(--black);border:1px solid var(--border);border-radius:16px;padding:18px;}
+.feat-num{font-size:10px;color:rgba(212,113,138,.5);letter-spacing:2px;font-family:monospace;margin-bottom:20px;}
+.feat-ico{font-size:36px;margin-bottom:18px;display:block;}
+.feat-t{font-size:19px;color:#fff;font-weight:700;margin-bottom:10px;line-height:1.3;}
+.feat-d{font-size:13px;color:var(--muted);line-height:1.8;}
+.fv-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:7px;background:rgba(212,113,138,.04);border:1px solid rgba(212,113,138,.08);}
+.fv-ico{font-size:20px;}
+.fv-info{}
+.fv-n{font-size:11px;color:#ddd;font-weight:600;}
+.fv-t{font-size:9px;color:var(--muted);margin-top:1px;}
+.fv-badge{margin-right:auto;padding:3px 9px;background:rgba(212,113,138,.1);border-radius:20px;font-size:9px;color:var(--rose);white-space:nowrap;}
+
+/* ── HOW ── */
+.how-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:72px;position:relative;}
+.how-grid::before{content:'';position:absolute;top:44px;right:calc(50%/3 + 44px);left:calc(50%/3 + 44px);height:1px;background:linear-gradient(90deg,transparent,var(--rose),transparent);opacity:.2;}
+.how-step{text-align:center;padding:0 28px;}
+.how-num{width:88px;height:88px;border-radius:50%;background:var(--black);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;position:relative;}
+.how-num::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(212,113,138,.2);}
+.how-num-inner{font-family:'Playfair Display',serif;font-size:28px;color:var(--rose);font-weight:700;}
+.how-ico{font-size:26px;margin-bottom:14px;display:block;}
+.how-t{font-size:18px;color:#fff;font-weight:700;margin-bottom:10px;}
+.how-d{font-size:13px;color:var(--muted);line-height:1.8;}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:72px;align-items:start;}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:36px 32px;position:relative;transition:transform .3s;}
+.price-card:hover{transform:translateY(-5px);}
+.price-card.pop{background:linear-gradient(160deg,#1e0e14,#140e10,#0f0f14);border-color:rgba(212,113,138,.35);box-shadow:0 0 80px rgba(212,113,138,.07),0 0 0 1px rgba(212,113,138,.1);}
+.pop-badge{position:absolute;top:-14px;right:50%;transform:translateX(50%);padding:5px 18px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));border-radius:100px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;box-shadow:0 4px 16px rgba(212,113,138,.4);}
+.p-tier{font-size:10px;color:var(--rose);letter-spacing:3px;font-family:monospace;margin-bottom:16px;}
+.p-price{font-family:'Playfair Display',serif;font-size:48px;color:#fff;line-height:1;}
+.p-price sub{font-size:16px;color:var(--muted);font-family:'Cairo',sans-serif;vertical-align:baseline;}
+.p-period{font-size:12px;color:var(--muted);margin-top:6px;margin-bottom:28px;}
+.p-divider{height:1px;background:rgba(255,255,255,0.1);margin-bottom:24px;}
+.p-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;}
+.p-list li{font-size:13px;color:#bbb;display:flex;gap:10px;align-items:flex-start;line-height:1.5;}
+.p-list li::before{content:'✓';color:var(--rose);font-weight:700;flex-shrink:0;margin-top:1px;}
+.p-list li.no{color:var(--muted);opacity:.5;}
+.p-list li.no::before{content:'—';color:var(--border2);}
+.p-cta{width:100%;padding:14px;border-radius:100px;font-size:14px;font-weight:700;font-family:'Cairo',sans-serif;cursor:none;transition:all .3s;letter-spacing:.3px;}
+.p-cta.ghost{background:transparent;border:1px solid var(--border2);color:var(--muted);}
+.p-cta.ghost:hover{border-color:var(--rose);color:var(--rose);}
+.p-cta.primary{background:linear-gradient(135deg,var(--rose),var(--rose-dark));border:none;color:#fff;box-shadow:0 8px 28px rgba(212,113,138,.35);}
+.p-cta.primary:hover{box-shadow:0 12px 36px rgba(212,113,138,.5);transform:scale(1.02);}
+.p-cta.dark{background:var(--black);border:1px solid var(--border);color:#ccc;}
+.p-cta.dark:hover{border-color:var(--rose);color:var(--rose);}
+
+/* VIP feature pills */
+.vip-pills{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.vip-pill{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(212,113,138,.05);border:1px solid rgba(212,113,138,.12);border-radius:12px;}
+.vip-pill-ico{font-size:16px;}
+.vip-pill-t{font-size:11px;color:#ccc;font-weight:600;}
+.vip-pill-s{font-size:10px;color:var(--muted);margin-top:1px;}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:72px;}
+.testi-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:28px;transition:transform .3s,border-color .3s;}
+.testi-card:hover{transform:translateY(-4px);border-color:rgba(212,113,138,.2);}
+.testi-stars{color:var(--gold);font-size:13px;letter-spacing:3px;margin-bottom:16px;}
+.testi-q{font-size:24px;color:rgba(212,113,138,.2);font-family:'Playfair Display',serif;margin-bottom:8px;}
+.testi-txt{font-size:14px;color:#ccc;line-height:1.8;margin-bottom:20px;}
+.testi-by{display:flex;align-items:center;gap:12px;}
+.testi-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+.testi-name{font-size:13px;color:#fff;font-weight:700;}
+.testi-role{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── CTA ── */
+.cta-section{padding:130px 80px;text-align:center;position:relative;overflow:hidden;}
+.cta-glow{position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 50% 50%,rgba(212,113,138,.07) 0%,transparent 65%);pointer-events:none;}
+.cta-deco{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.12;pointer-events:none;}
+.cta-h2{font-family:'Playfair Display',serif;font-size:clamp(34px,4.5vw,62px);color:#fff;line-height:1.1;margin-bottom:22px;position:relative;z-index:1;}
+.cta-h2 em{color:var(--rose);font-style:italic;}
+.cta-sub{font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:48px;position:relative;z-index:1;}
+.cta-form{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;padding:5px;max-width:480px;margin:0 auto 20px;position:relative;z-index:1;}
+.cta-note{font-size:12px;color:var(--muted);position:relative;z-index:1;}
+.cta-note b{color:var(--rose-light);}
+
+/* ── FOOTER ── */
+footer{padding:36px 80px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.f-logo{font-family:'Playfair Display',serif;font-size:17px;color:#fff;}
+.f-logo span{color:var(--rose);}
+.f-copy{font-size:11px;color:var(--muted);}
+.f-links{display:flex;gap:24px;}
+.f-links a{font-size:11px;color:var(--muted);text-decoration:none;transition:color .3s;}
+.f-links a:hover{color:var(--rose);}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease;}
+.reveal.in{opacity:1;transform:none;}
+.reveal-delay-1{transition-delay:.1s;}
+.reveal-delay-2{transition-delay:.2s;}
+.reveal-delay-3{transition-delay:.3s;}
+
+/* ── ANIMATIONS ── */
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+@keyframes phoneFloat{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-14px) rotate(.5deg)}}
+@keyframes chipFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes chipFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(11px)}}
+@keyframes chipFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:100px 24px 60px;}
+  .hero-l{padding:0;}
+  .hero-r{order:-1;margin-bottom:48px;}
+  nav{padding:0 24px;}
+  .nav-r a{display:none;}
+  .sec,.cta-section{padding:70px 24px;}
+  .nums-section{padding:60px 24px;}
+  .prob-grid{grid-template-columns:1fr;}
+  .nums-grid{grid-template-columns:1fr 1fr;}
+  .num-item{border-left:none;border-bottom:1px solid rgba(255,255,255,0.1);}
+  .feat-row-1,.feat-row-2{grid-template-columns:1fr;}
+  .feat-card.big .feat-visual{display:none;}
+  .how-grid{grid-template-columns:1fr;gap:40px;}
+  .how-grid::before{display:none;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .testi-grid{grid-template-columns:1fr;}
+  footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;}
+  .chip{display:none;}
+  .phone-wrap{width:240px;}.phone{width:220px;height:460px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Out<span>fio</span>
+  </div>
+  <div class="nav-r">
+    <a href="#features">المميزات</a>
+    <a href="#how">إزاي بيشتغل</a>
+    <a href="#pricing">الأسعار</a>
+    <button class="nav-btn" onclick="goWait()">احجزي مكانك 💫</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid-lines"></div>
+
+  <div class="hero-l">
+    <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>القائمة بتفتح قريباً</div>
+    <h1 class="hero-h1">
+      بطّلي تقفي<br>
+      قدام الدولاب<br>
+      <em>مش عارفة تلبسي إيه</em>
+      <span class="line2">— ده مش هيحصل تاني</span>
+    </h1>
+    <p class="hero-sub">Outfio مستشارك الشخصي اللي بيعرف كل قطعة في دولابك — بيقترحلك تنسيق كل يوم، وبيقولك إيه الناقص، وبيجيبهولك.</p>
+    <div class="hero-form" id="heroForm">
+      <input class="hero-inp" type="email" placeholder="ايميلك هنا..." id="heroEmail">
+      <button class="hero-sub-btn" onclick="join('hero')">احجزي مكانك →</button>
+    </div>
+    <p class="hero-note">مجاناً تماماً • <b>+850 بنت</b> انضمت قبلك</p>
+    <div class="success-toast" id="heroOk">✅ تمام! هنبعتلك إيميل لما يتفتح الباب.</div>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hstat-val">30<span>ث</span></span><div class="hstat-lbl">بس وتعرفي تنسيقك</div></div>
+      <div class="hstat"><span class="hstat-val">100<span>%</span></span><div class="hstat-lbl">من دولابك الحقيقي</div></div>
+      <div class="hstat"><span class="hstat-val">∞</span><div class="hstat-lbl">تنسيق ممكن</div></div>
+    </div>
+  </div>
+
+  <div class="hero-r">
+    <div class="phone-wrap">
+      <!-- chips -->
+      <div class="chip chip1">
+        <div class="chip-ico">✨</div>
+        <div><div class="chip-t">تنسيق اليوم جاهز</div><div class="chip-s">فستان + بليزر + حذاء</div></div>
+      </div>
+      <div class="chip chip2">
+        <div class="chip-ico">🔍</div>
+        <div><div class="chip-t">دولابك ٧٨٪ مكتمل</div><div class="chip-s">٣ قطع بس ناقصة</div></div>
+      </div>
+      <div class="chip chip3">
+        <div class="chip-ico">🛍️</div>
+        <div><div class="chip-t">لقيناها بـ ٢٩٩ ج</div><div class="chip-s">Namshi • توصيل سريع</div></div>
+      </div>
+
+      <div class="phone">
+        <div class="p-screen">
+          <div class="p-topbar">
+            <div>
+              <div class="p-brand">OUTFIO</div>
+              <div class="p-name">صباح الجمال 🌸</div>
+            </div>
+            <div class="p-avatar">س</div>
+          </div>
+          <div class="p-card-hero">
+            <div class="p-card-label">تنسيق النهارده</div>
+            <div class="p-outfit">
+              <div class="p-piece">👗</div>
+              <div class="p-piece">🧥</div>
+              <div class="p-piece">👜</div>
+              <div class="p-piece">👠</div>
+            </div>
+            <div class="p-outfit-txt">فستان بيج + بليزر أبيض + شنطة كاميل ✨</div>
+            <button class="p-btn-mini">شوفي التفاصيل</button>
+          </div>
+          <div class="p-grid">
+            <div class="p-mini"><div class="p-mini-ico">👗</div><div class="p-mini-t">دولابي</div><div class="p-mini-s">٣٦ قطعة</div></div>
+            <div class="p-mini"><div class="p-mini-ico">✨</div><div class="p-mini-t">تنسيق</div><div class="p-mini-s">بالمناسبة</div></div>
+            <div class="p-mini"><div class="p-mini-ico">🔍</div><div class="p-mini-t">الناقص</div><div class="p-mini-s">٣ قطع</div></div>
+            <div class="p-mini"><div class="p-mini-ico">🛍️</div><div class="p-mini-t">تسوقي</div><div class="p-mini-s">عروض</div></div>
+          </div>
+          <div class="p-progress">
+            <div class="p-progress-top">
+              <div class="p-progress-lbl">اكتمال الدولاب</div>
+              <div class="p-progress-val">٧٨٪</div>
+            </div>
+            <div class="p-bar"><div class="p-bar-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-section">
+  <div class="ticker-track">
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">بطّلي التفكير كل صبح</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">دولابك الرقمي الخاص بيكِ</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">تنسيق لكل مناسبة</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">اعرفي إيه الناقص فعلاً</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">تسوقي بذكاء</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">بيعرف ذوقك أحسن منك</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">مش هتندمي أبداً</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">Style Report شهري</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">بطّلي التفكير كل صبح</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">دولابك الرقمي الخاص بيكِ</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">تنسيق لكل مناسبة</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">اعرفي إيه الناقص فعلاً</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">تسوقي بذكاء</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">بيعرف ذوقك أحسن منك</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">مش هتندمي أبداً</span></div>
+    <div class="tick"><div class="tick-dot"></div><span class="tick-txt">Style Report شهري</span></div>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<section class="sec prob-section">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="sec-tag">بتحسي بكده؟</div>
+      <h2 class="sec-h2">إنتِ مش لوحدك<br>اللي <em>بتعاني كده</em></h2>
+    </div>
+    <div class="prob-grid reveal">
+      <div class="prob-card">
+        <div class="prob-num">01</div>
+        <span class="prob-ico">😤</span>
+        <div class="prob-t">"مش عارفة ألبس إيه!" — كل يوم</div>
+        <div class="prob-d">دولابك مليان وإنتِ واقفة قدامه مش شايفة حاجة تتلبس. ده مش غلطتك — ده غلطة إن مفيش حد ينظمهولك.</div>
+      </div>
+      <div class="prob-card">
+        <div class="prob-num">02</div>
+        <span class="prob-ico">💸</span>
+        <div class="prob-t">بتشتري وبتشتري وبرضو مش كفاية</div>
+        <div class="prob-d">بتصرفي فلوس كتير على قطع بعدين ملقتيش حاجة تتنسق مع بعض. Outfio بيقولك تشتري إيه بالظبط.</div>
+      </div>
+      <div class="prob-card">
+        <div class="prob-num">03</div>
+        <span class="prob-ico">😬</span>
+        <div class="prob-t">مناسبة وإنتِ مش جاهزة خالص</div>
+        <div class="prob-d">فرح، شغل، سهرة — وبتلاقي دولابك مش فيه حاجة مناسبة. مع Outfio ده مش هيحصل تاني.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<div class="nums-section">
+  <div class="nums-grid reveal">
+    <div class="num-item"><span class="num-val">+<b>850</b></span><div class="num-lbl">بنت في قائمة الانتظار</div></div>
+    <div class="num-item"><span class="num-val"><b>30</b>ث</span><div class="num-lbl">وتعرفي تنسيقك للنهارده</div></div>
+    <div class="num-item"><span class="num-val"><b>4</b></span><div class="num-lbl">متاجر مصرية مربوطة</div></div>
+    <div class="num-item"><span class="num-val"><b>∞</b></span><div class="num-lbl">تنسيق ممكن من دولابك</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="sec" id="features">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="sec-tag">ليه هو مختلف؟</div>
+      <h2 class="sec-h2">أحسن صاحبة عندها ذوق —<br><em>وما بتتعبش</em></h2>
+      <p class="sec-sub">زي صاحبتك اللي بتعرف كل قطعة في دولابك وبتقولك تلبسي إيه — بس دي شاطرة أكتر!</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-row-1">
+        <div class="feat-card big reveal">
+          <div class="feat-num">الميزة الأولى</div>
+          <span class="feat-ico">📸</span>
+          <div class="feat-t">دولابك الرقمي — كل قطعة في موبايلك</div>
+          <div class="feat-d">صوّري أي قطعة وهو بيحللها لحظتها — بيعرف اللون، النوع، الموسم، والمناسبة المناسبة. دولابك كله في إيدك.</div>
+          <div class="feat-visual">
+            <div class="fv-item"><div class="fv-ico">👗</div><div class="fv-info"><div class="fv-n">فستان بيج كاجوال</div><div class="fv-t">فساتين • بيج • يومي / عمل</div></div><div class="fv-badge">لُبس ١٨×</div></div>
+            <div class="fv-item"><div class="fv-ico">🧥</div><div class="fv-info"><div class="fv-n">بليزر أبيض</div><div class="fv-t">جاكيتات • أبيض • رسمي / كاجوال</div></div><div class="fv-badge">لُبس ١٢×</div></div>
+            <div class="fv-item"><div class="fv-ico">👜</div><div class="fv-info"><div class="fv-n">شنطة جلد كاميل</div><div class="fv-t">شنط • كاميل • كل المناسبات</div></div><div class="fv-badge">لُبست ٣٤×</div></div>
+          </div>
+        </div>
+        <div class="feat-card reveal reveal-delay-1">
+          <div class="feat-num">الميزة التانية</div>
+          <span class="feat-ico">✨</span>
+          <div class="feat-t">تنسيق جاهز — من غير ما تفكري</div>
+          <div class="feat-d">قوليله "عندي فرح بكره" أو "اجتماع شغل" وهو بيجيبلك تنسيق كامل من دولابك بالاسم. خلاص!</div>
+        </div>
+      </div>
+      <div class="feat-row-2">
+        <div class="feat-card reveal">
+          <div class="feat-num">الميزة التالتة</div>
+          <span class="feat-ico">🔍</span>
+          <div class="feat-t">اعرفي إيه الناقص فعلاً</div>
+          <div class="feat-d">بيحلل دولابك ويقولك إيه القطع الناقصة وليه — مرتبين حسب الأهمية والميزانية.</div>
+        </div>
+        <div class="feat-card reveal reveal-delay-1">
+          <div class="feat-num">الميزة الرابعة</div>
+          <span class="feat-ico">🛍️</span>
+          <div class="feat-t">بيجيبلك اللي ناقص بأرخص سعر</div>
+          <div class="feat-d">بيدور على القطعة في المتاجر المصرية ويقارن الأسعار ليكِ. مش محتاجة تدوري إنتِ.</div>
+        </div>
+        <div class="feat-card reveal reveal-delay-2">
+          <div class="feat-num">بونص ✨</div>
+          <span class="feat-ico">📊</span>
+          <div class="feat-t">Style Report شهري ليكِ</div>
+          <div class="feat-d">كل شهر تقرير كامل عن استايلك — إيه الأكتر لُبس، توصيات الشهر الجاي، وخطة التسوق.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="sec how-section" id="how">
+  <div class="sec-inner">
+    <div class="reveal" style="text-align:center;">
+      <div class="sec-tag" style="justify-content:center;">إزاي بيشتغل</div>
+      <h2 class="sec-h2" style="text-align:center;">٣ خطوات <em>وخلاص</em></h2>
+      <p class="sec-sub" style="margin:0 auto;text-align:center;">أسهل من ما بتتخيلي. جربي وبعدين قوليلنا!</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-step reveal">
+        <div class="how-num"><div class="how-num-inner">١</div></div>
+        <span class="how-ico">📸</span>
+        <div class="how-t">صوّري دولابك</div>
+        <div class="how-d">ارفعي صور ملابسك قطعة قطعة وهو بيبني دولابك الرقمي في ثواني.</div>
+      </div>
+      <div class="how-step reveal reveal-delay-1">
+        <div class="how-num"><div class="how-num-inner">٢</div></div>
+        <span class="how-ico">🧠</span>
+        <div class="how-t">هو بيتعلم ذوقك</div>
+        <div class="how-d">بيفهم استايلك، مناسباتك، وميزانيتك — وبيتحسن كل ما تستخدميه أكتر.</div>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="how-num"><div class="how-num-inner">٣</div></div>
+        <span class="how-ico">💫</span>
+        <div class="how-t">إنتِ دايماً على مستوى</div>
+        <div class="how-d">كل يوم تنسيق جديد، كل مناسبة لبس مثالي، ودولابك دايماً متكامل.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="sec-tag">بيقولوا إيه</div>
+      <h2 class="sec-h2">بنات جربته<br><em>وبيحبوه جداً</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-q">"</div>
+        <div class="testi-txt">أخيراً حل لمشكلتي اليومية! بقيت بصحى وأنا عارفة هلبس إيه من غير ما أفكر. وفّر عليّا وقت ومجهود مش طبيعي.</div>
+        <div class="testi-by"><div class="testi-av">س</div><div><div class="testi-name">سارة أحمد</div><div class="testi-role">مصممة جرافيك • القاهرة</div></div></div>
+      </div>
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-q">"</div>
+        <div class="testi-txt">بنيت دولابي الرقمي في نص ساعة وعرفت إيه اللي ناقصني. وفّرلي فلوس كتير كنت هصرفها على حاجات مش محتاجاها.</div>
+        <div class="testi-by"><div class="testi-av">م</div><div><div class="testi-name">منى خالد</div><div class="testi-role">موظفة بنك • الإسكندرية</div></div></div>
+      </div>
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-q">"</div>
+        <div class="testi-txt">صحيت الصبح قبل الشغل مش عارفة ألبس إيه. فتحت التطبيق وفي ٣٠ ثانية لقيت تنسيق كامل من دولابي. ده سحر بجد!</div>
+        <div class="testi-by"><div class="testi-av">ن</div><div><div class="testi-name">نورا محمود</div><div class="testi-role">دكتورة • القاهرة</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sec" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);" id="pricing">
+  <div class="sec-inner">
+    <div class="reveal" style="text-align:center;">
+      <div class="sec-tag" style="justify-content:center;">الأسعار</div>
+      <h2 class="sec-h2" style="text-align:center;">ابدأي <em>مجاناً</em><br>وارتقي لما تحبي</h2>
+      <p class="sec-sub" style="margin:0 auto;text-align:center;">مفيش كارت ائتمان. مفيش التزام. جربي وبعدين قرري.</p>
+    </div>
+    <div class="pricing-grid">
+
+      <!-- FREE -->
+      <div class="price-card reveal">
+        <div class="p-tier">مجاني</div>
+        <div class="p-price">٠<sub> ج</sub></div>
+        <div class="p-period">للأبد — ابدأي دلوقتي</div>
+        <div class="p-divider"></div>
+        <ul class="p-list">
+          <li>١٥ قطعة في الدولاب</li>
+          <li>٣ تنسيقات يومياً</li>
+          <li>تحليل الدولاب مرة / شهر</li>
+          <li class="no">تسوق مباشر</li>
+          <li class="no">تنسيق بالطقس</li>
+          <li class="no">Style Report شهري</li>
+        </ul>
+        <button class="p-cta ghost">ابدأي مجاناً</button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="price-card pop reveal reveal-delay-1">
+        <div class="pop-badge">💫 الأشهر</div>
+        <div class="p-tier">بريميوم</div>
+        <div class="p-price">١٤٩<sub> ج / شهر</sub></div>
+        <div class="p-period">أقل من ٥ ج في اليوم</div>
+        <div class="p-divider"></div>
+        <ul class="p-list">
+          <li>دولاب غير محدود</li>
+          <li>تنسيقات غير محدودة</li>
+          <li>تحليل الدولاب أي وقت</li>
+          <li>تسوق مباشر بأرخص سعر</li>
+          <li>تنسيق بناءً على الطقس</li>
+          <li class="no">Style Report شهري</li>
+        </ul>
+        <button class="p-cta primary">جربي البريميوم</button>
+      </div>
+
+      <!-- VIP -->
+      <div class="price-card reveal reveal-delay-2">
+        <div class="p-tier">VIP</div>
+        <div class="p-price">٢٩٩<sub> ج / شهر</sub></div>
+        <div class="p-period">للجادة في استايلها</div>
+        <div class="p-divider"></div>
+        <div class="vip-pills">
+          <div class="vip-pill">
+            <div class="vip-pill-ico">📊</div>
+            <div><div class="vip-pill-t">Style Report شهري PDF</div><div class="vip-pill-s">تحليل كامل لاستايلك كل شهر</div></div>
+          </div>
+          <div class="vip-pill">
+            <div class="vip-pill-ico">📅</div>
+            <div><div class="vip-pill-t">Occasion Planner</div><div class="vip-pill-s">حضّري أجندتك الشهرية كلها</div></div>
+          </div>
+          <div class="vip-pill">
+            <div class="vip-pill-ico">🍂</div>
+            <div><div class="vip-pill-t">Seasonal Refresh</div><div class="vip-pill-s">تجديد دولابك كل موسم</div></div>
+          </div>
+        </div>
+        <ul class="p-list" style="margin-bottom:20px;">
+          <li>كل حاجة في البريميوم</li>
+          <li>أول حاجة بتتفتح دايماً</li>
+        </ul>
+        <button class="p-cta dark">انضمي لـ VIP</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="cta-glow"></div>
+  <div class="cta-deco"></div>
+  <div class="reveal">
+    <h2 class="cta-h2">مستنياكِ<br><em>من زمان 💫</em></h2>
+    <p class="cta-sub">سجّلي إيميلك دلوقتي واحجزي مكانك مجاناً.<br>أوائل البنات هياخدوا <strong style="color:var(--rose-light)">خصم ٥٠٪</strong> لأول ٣ شهور.</p>
+    <div class="cta-form">
+      <input class="hero-inp" type="email" placeholder="ايميلك هنا..." id="ctaEmail">
+      <button class="hero-sub-btn" onclick="join('cta')">احجزي مكانك →</button>
+    </div>
+    <div class="success-toast" id="ctaOk">✅ تمام! هنبعتلك لما يتفتح الباب.</div>
+    <p class="cta-note" style="margin-top:16px;"><b>+850 بنت</b> سبقوكِ — متتأخريش!</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Out<span>fio</span></div>
+  <div class="f-copy">© 2025 Outfio. كل الحقوق محفوظة.</div>
+  <div class="f-links">
+    <a href="#">الخصوصية</a>
+    <a href="#">الشروط</a>
+    <a href="#">تواصلي معنا</a>
+  </div>
+</footer>
+
+<script>
+// Cursor
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animate(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animate);})();
+
+// Nav scroll
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40));
+
+// Reveal
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Waitlist — Tally Integration
+async function join(src){
+  const inp=document.getElementById(src==='hero'?'heroEmail':'ctaEmail');
+  const btn=inp.nextElementSibling;
+  const ok=document.getElementById(src==='hero'?'heroOk':'ctaOk');
+  const email=inp.value.trim();
+
+  if(!email||!email.includes('@')){
+    inp.style.borderColor='rgba(255,100,100,.5)';
+    inp.placeholder='ايميل صحيح من فضلك 😅';
+    setTimeout(()=>{inp.style.borderColor='';inp.placeholder='ايميلك هنا...';},2500);
+    return;
+  }
+
+  // Loading state
+  btn.textContent='جاري التسجيل...';
+  btn.style.opacity='0.7';
+  inp.disabled=true;
+
+  try {
+    await fetch('https://tally.so/r/5BpP4b', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      mode: 'no-cors',
+      body: JSON.stringify({email: email})
+    });
+  } catch(e) {}
+
+  // Always show success — no-cors means we can't read the response
+  inp.parentElement.style.display='none';
+  ok.classList.add('show');
+
+  // Update counter
+  document.querySelectorAll('.hero-note b, .cta-note b').forEach(el=>{
+    if(el.textContent.includes('بنت')){
+      const n=parseInt(el.textContent.replace(/[^0-9]/g,''));
+      el.textContent='+'+(n+1)+' بنت';
+    }
+  });
+}
+
+function goWait(){document.getElementById('waitlist').scrollIntoView({behavior:'smooth'});}
+</script>
+</body>
+</html>
